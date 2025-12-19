@@ -1,33 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard IoT ESP32</title>
   <style>
     body {
-      font-family: Arial;
-      background: #f4f4f4;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef1f5;
+      margin: 0;
+      padding: 0;
     }
+
+    h2 {
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
     .card {
       background: white;
-      padding: 20px;
-      margin: 20px auto;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding: 18px;
+      border-radius: 12px;
+      border-left: 6px solid #4a90e2;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .sensor-title {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .sensor-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .unit {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .pir-true {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .pir-false {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 12px;
+      color: #777;
     }
   </style>
 </head>
 <body>
 
-<h2 align="center">📊 Dashboard IoT ESP32</h2>
+<h2>📊 Dashboard IoT agil</h2>
 
-<div class="card">
-  <p>🌡 Suhu: <b><span id="suhu">-</span> °C</b></p>
-  <p>💧 Kelembaban: <b><span id="kelembaban">-</span> %</b></p>
-  <p>💡 Cahaya (LDR): <b><span id="cahaya">-</span></b></p>
-  <p>🚶 PIR: <b><span id="gerakan">-</span></b></p>
+<div class="container">
+  <div class="grid">
+
+    <div class="card">
+      <div class="sensor-title">🌡 Suhu</div>
+      <div class="sensor-value">
+        <span id="suhu">-</span> <span class="unit">°C</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sensor-title">💧 Kelembaban</div>
+      <div class="sensor-value">
+        <span id="kelembaban">-</span> <span class="unit">%</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sensor-title">💡 Cahaya (LDR)</div>
+      <div class="sensor-value">
+        <span id="cahaya">-</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sensor-title">🚶 Sensor PIR</div>
+      <div class="sensor-value">
+        <span id="gerakan">-</span>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+<footer>
+  Realtime ESP32 Monitoring • Firebase Realtime Database
+</footer>
 
 <script>
 const firebaseURL =
@@ -42,10 +128,17 @@ function loadData() {
       document.getElementById("suhu").innerText = data.suhu ?? "-";
       document.getElementById("kelembaban").innerText = data.kelembaban ?? "-";
       document.getElementById("cahaya").innerText = data.cahaya ?? "-";
-      document.getElementById("gerakan").innerText =
-        data.gerakan ? "Terdeteksi" : "Tidak";
+
+      const pirEl = document.getElementById("gerakan");
+      if (data.gerakan) {
+        pirEl.innerText = "TERDETEKSI";
+        pirEl.className = "pir-true";
+      } else {
+        pirEl.innerText = "AMAN";
+        pirEl.className = "pir-false";
+      }
     })
-    .catch(err => console.error(err));
+    .catch(err => console.error("Firebase error:", err));
 }
 
 setInterval(loadData, 1000);
